@@ -1,39 +1,45 @@
 import React, { useState } from "react";
 
-const CheckListApp = () => {
-  const [items, setItems] = useState([]);
-  const [text, setText] = useState("");
+interface Task {
+  id: number;
+  text: string;
+  completed: boolean;
+}
 
-  const handleTextChange = (event) => {
-    setText(event.target.value);
+const TodoApp: React.FC = () => {
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [inputValue, setInputValue] = useState("");
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(event.target.value);
   };
 
-  const handleAddItem = () => {
-    if (text.trim() !== "") {
-      const newItem = {
+  const handleAddTask = () => {
+    if (inputValue.trim() !== "") {
+      const newTask: Task = {
         id: new Date().getTime(),
-        text: text.trim(),
-        checked: false,
+        text: inputValue.trim(),
+        completed: false,
       };
 
-      setItems([...items, newItem]);
-      setText("");
+      setTasks([...tasks, newTask]);
+      setInputValue("");
     }
   };
 
-  const handleToggleCheck = (itemId) => {
-    setItems((prevItems) =>
-      prevItems.map((item) => {
-        if (item.id === itemId) {
-          return { ...item, checked: !item.checked };
+  const handleToggleTask = (taskId: number) => {
+    setTasks((prevTasks) =>
+      prevTasks.map((task) => {
+        if (task.id === taskId) {
+          return { ...task, completed: !task.completed };
         }
-        return item;
+        return task;
       })
     );
   };
 
-  const handleDeleteItem = (itemId) => {
-    setItems((prevItems) => prevItems.filter((item) => item.id !== itemId));
+  const handleDeleteTask = (taskId: number) => {
+    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
   };
 
   return (
@@ -41,37 +47,59 @@ const CheckListApp = () => {
       style={{
         display: "flex",
         flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        flex: 1,
+        justifyContent: "start", // center items vertically
+        alignItems: "center", // center items horizontally
+        margin: 30,
       }}
     >
-      <h1 style={{ fontFamily: "cursive", marginTop: 30 }}>Ameela Niqabisku</h1>
-      <h1 style={{ fontFamily: "Arial", marginTop: 30 }}>Check List App</h1>
-
-      <div style={{ marginTop: 20 }}>
+      <h1 style={{ fontFamily: "Arial" }}>KERJA NAK BUAT</h1>
+      <div>
         <input
           type="text"
-          value={text}
-          onChange={handleTextChange}
-          placeholder="Enter an item"
+          value={inputValue}
+          onChange={handleInputChange}
+          placeholder="Masukkan Tugas"
+          style={{ width: "200px", height: "50px" }}
         />
-        <button onClick={handleAddItem}>Add</button>
+        <button
+          style={{
+            margin: 10,
+            color: "white",
+            backgroundColor: "green",
+            border: "green",
+            padding: 5,
+          }}
+          onClick={handleAddTask}
+        >
+          Add
+        </button>
       </div>
       <ul>
-        {items.map((item) => (
-          <li key={item.id}>
+        {tasks.map((task) => (
+          <li key={task.id}>
             <input
+              style={{ margin: 10 }}
               type="checkbox"
-              checked={item.checked}
-              onChange={() => handleToggleCheck(item.id)}
+              checked={task.completed}
+              onChange={() => handleToggleTask(task.id)}
             />
             <span
-              style={item.checked ? { textDecoration: "line-through" } : {}}
+              style={task.completed ? { textDecoration: "line-through" } : {}}
             >
-              {item.text}
+              {task.text}
             </span>
-            <button onClick={() => handleDeleteItem(item.id)}>Delete</button>
+            <button
+              style={{
+                margin: 10,
+                color: "white",
+                backgroundColor: "red",
+                border: "green",
+                padding: 5,
+              }}
+              onClick={() => handleDeleteTask(task.id)}
+            >
+              Delete
+            </button>
           </li>
         ))}
       </ul>
@@ -79,4 +107,4 @@ const CheckListApp = () => {
   );
 };
 
-export default CheckListApp;
+export default TodoApp;
